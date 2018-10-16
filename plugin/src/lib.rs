@@ -8,6 +8,6 @@ impl PluginInterface for SomePlugin {
 }
 
 #[no_mangle]
-pub extern "C" fn get_plugin() -> Box<PluginInterface> {
+pub fn get_plugin() -> Box<PluginInterface> {
     Box::new(SomePlugin)
 }

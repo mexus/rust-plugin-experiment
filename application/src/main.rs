@@ -1,5 +1,3 @@
-// extern crate libloading as lib;
-
 use common::{load_plugin, PluginInterface};
 use std::ffi::OsString;
 use structopt::StructOpt;
