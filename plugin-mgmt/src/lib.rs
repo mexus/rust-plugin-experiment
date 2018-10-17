@@ -4,7 +4,8 @@
 //!
 //! By default the library enforces the
 //! [`System`](https://doc.rust-lang.org/std/alloc/struct.System.html) allocator to be used by
-//! explicitly setting a global allocator to it.
+//! setting it explicitly via
+//! [`#[global_allocator]`](https://doc.rust-lang.org/std/alloc/index.html#the-global_allocator-attribute).
 //!
 //! If this behaviour is undesired and you know what you're doing, use this library with a feature
 //! `no_enforce_system_allocator` activated.
