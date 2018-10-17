@@ -1,4 +1,9 @@
-use common::{load_plugin, PluginInterface};
+extern crate plugin_mgmt;
+
+#[macro_use]
+extern crate structopt;
+
+use plugin_mgmt::{load_plugin, PluginInterface};
 use std::ffi::OsString;
 use structopt::StructOpt;
 
@@ -14,14 +19,16 @@ struct Config {
 
 fn main() {
     let conf = Config::from_args();
-    let plugins: Vec<_> = conf
+    let plugins = conf
         .plugins
-        .into_iter()
-        .map(Some)
+        .iter()
         .map(load_plugin)
-        .collect::<Result<_, _>>()
+        .collect::<Result<Vec<_>, _>>()
         .unwrap();
-    for plugin in &plugins {
+    let mut v = Vec::new();
+    for plugin in plugins {
         println!("Loaded {}", plugin.get_name());
+        v = plugin.get_vector();
     }
+    println!("Received a vector of {} elements", v.len());
 }

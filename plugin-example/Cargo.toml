@@ -1,13 +1,11 @@
 [package]
-name = "plugin"
+name = "plugin-example"
 version = "0.1.0"
 authors = ["mexus <gilaldpellaeon@gmail.com>"]
-edition = "2018"
 publish = false
 
 [dependencies]
-common = { path = "../common/" }
+plugin-mgmt = { path = "../plugin-mgmt/" }
 
 [lib]
-name = "plugin"
-crate-type = ["dylib"]
+crate-type = ["cdylib"]

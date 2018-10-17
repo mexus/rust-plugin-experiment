@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "common",
+    "plugin-mgmt",
     "application",
-    "plugin",
+    "plugin-example",
 ]
