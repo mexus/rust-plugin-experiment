@@ -5,7 +5,7 @@ authors = ["mexus <gilaldpellaeon@gmail.com>"]
 publish = false
 
 [dependencies]
-plugin-mgmt = { path = "../plugin-mgmt/" }
+common = { path = "../common/" }
 
 [lib]
 crate-type = ["cdylib"]

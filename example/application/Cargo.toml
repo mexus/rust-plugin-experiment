@@ -1,9 +1,9 @@
 [package]
-name = "application"
+name = "example-application"
 version = "0.1.0"
 authors = ["mexus <gilaldpellaeon@gmail.com>"]
 publish = false
 
 [dependencies]
-plugin-mgmt = { path = "../plugin-mgmt/" }
+common = { path = "../common/" }
 structopt = "0.2.12"

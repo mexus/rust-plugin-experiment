@@ -1,9 +1,10 @@
-extern crate plugin_mgmt;
-
 #[macro_use]
 extern crate structopt;
 
-use plugin_mgmt::{load_plugin, PluginInterface};
+extern crate common;
+
+use common::ExtPlugin;
+
 use std::ffi::OsString;
 use structopt::StructOpt;
 
@@ -22,13 +23,13 @@ fn main() {
     let plugins = conf
         .plugins
         .iter()
-        .map(load_plugin)
+        .map(ExtPlugin::from_path)
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
     let mut v = Vec::new();
     for plugin in plugins {
         println!("Loaded {}", plugin.get_name());
-        v = plugin.get_vector();
+        v = plugin.get_strings();
     }
     println!("Received a vector of {} elements", v.len());
 }
