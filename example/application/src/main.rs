@@ -3,7 +3,7 @@ extern crate structopt;
 
 extern crate common;
 
-use common::ExtPlugin;
+use common::load_plugin;
 
 use std::ffi::OsString;
 use structopt::StructOpt;
@@ -23,7 +23,7 @@ fn main() {
     let plugins = conf
         .plugins
         .iter()
-        .map(ExtPlugin::from_path)
+        .map(load_plugin)
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
     let mut v = Vec::new();

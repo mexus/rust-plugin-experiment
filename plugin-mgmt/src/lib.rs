@@ -19,24 +19,31 @@ static A: ::std::alloc::System = ::std::alloc::System;
 use std::ffi::OsStr;
 use std::ops::Deref;
 
+pub use libloading::Result;
+
 pub struct SharedLibPlugin<T: ?Sized> {
     plugin_interface: *mut T,
     lib: Option<libloading::Library>,
 }
 
-impl<T: ?Sized> SharedLibPlugin<T> {
-    pub fn from_path(path: impl AsRef<OsStr>) -> libloading::Result<Self> {
-        let lib = libloading::Library::new(path)?;
-        let plugin: Box<T> = unsafe {
-            let func: libloading::Symbol<unsafe fn() -> Box<T>> = lib.get(b"get_plugin")?;
-            func()
-        };
-        let plugin_interface = Box::into_raw(plugin);
-        Ok(SharedLibPlugin {
-            plugin_interface,
-            lib: Some(lib),
-        })
-    }
+pub fn load_plugin<T: ?Sized, F, T1, P: AsRef<OsStr>>(
+    path: P,
+    symbol: &[u8],
+    initial_value: T1,
+) -> Result<SharedLibPlugin<T>>
+where
+    F: Fn(T1) -> Box<T>,
+{
+    let lib = libloading::Library::new(path)?;
+    let plugin: Box<T> = unsafe {
+        let func: libloading::Symbol<F> = lib.get(symbol)?;
+        func(initial_value)
+    };
+    let plugin_interface = Box::into_raw(plugin);
+    Ok(SharedLibPlugin {
+        plugin_interface,
+        lib: Some(lib),
+    })
 }
 
 impl<T: ?Sized> Deref for SharedLibPlugin<T> {
