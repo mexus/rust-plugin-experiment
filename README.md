@@ -4,5 +4,5 @@ Usage:
 
 ```sh
 % cargo build
-% ./target/debug/application target/debug/libplugin_example.so
+% ./target/debug/example-application ./target/debug/libplugin_example.so
 ```
