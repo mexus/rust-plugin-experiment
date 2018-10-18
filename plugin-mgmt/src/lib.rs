@@ -26,18 +26,31 @@ pub struct SharedLibPlugin<T: ?Sized> {
     lib: Option<libloading::Library>,
 }
 
-pub fn load_plugin<T: ?Sized, F, T1, P: AsRef<OsStr>>(
+pub fn load_plugin<T: ?Sized, P: AsRef<OsStr>>(
     path: P,
     symbol: &[u8],
-    initial_value: T1,
-) -> Result<SharedLibPlugin<T>>
-where
-    F: Fn(T1) -> Box<T>,
-{
+) -> Result<SharedLibPlugin<T>> {
     let lib = libloading::Library::new(path)?;
     let plugin: Box<T> = unsafe {
-        let func: libloading::Symbol<F> = lib.get(symbol)?;
-        func(initial_value)
+        let func: libloading::Symbol<fn() -> Box<T>> = lib.get(symbol)?;
+        func()
+    };
+    let plugin_interface = Box::into_raw(plugin);
+    Ok(SharedLibPlugin {
+        plugin_interface,
+        lib: Some(lib),
+    })
+}
+
+pub fn load_plugin_arg<T: ?Sized, A, P: AsRef<OsStr>>(
+    path: P,
+    symbol: &[u8],
+    arg: A,
+) -> Result<SharedLibPlugin<T>> {
+    let lib = libloading::Library::new(path)?;
+    let plugin: Box<T> = unsafe {
+        let func: libloading::Symbol<fn(A) -> Box<T>> = lib.get(symbol)?;
+        func(arg)
     };
     let plugin_interface = Box::into_raw(plugin);
     Ok(SharedLibPlugin {

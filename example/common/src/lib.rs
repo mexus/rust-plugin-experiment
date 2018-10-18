@@ -8,7 +8,7 @@ pub trait CommonTrait {
 }
 
 pub fn load_plugin(path: impl AsRef<OsStr>) -> plugin_mgmt::Result<ExtPlugin> {
-    plugin_mgmt::load_plugin::<CommonTrait, fn(_) -> Box<_>, _, _>(path, b"get_plugin", ())
+    plugin_mgmt::load_plugin::<CommonTrait, _>(path, b"get_plugin")
 }
 
 pub type ExtPlugin = plugin_mgmt::SharedLibPlugin<CommonTrait>;
