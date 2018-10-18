@@ -2,6 +2,12 @@
 name = "plugin-mgmt"
 version = "0.1.0"
 authors = ["mexus <gilaldpellaeon@gmail.com>"]
+description = "Dynamic plugin management helper"
+license = "MIT/Apache-2.0"
+keywords = ["plugins"]
+repository = "https://gitlab.com/mexus/rust-plugin-experiment"
+documentation = "https://docs.rs/plugin-mgmt/"
+readme = "README.md"
 
 [dependencies]
 libloading = "0.5.0"

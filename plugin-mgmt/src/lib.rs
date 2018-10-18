@@ -1,4 +1,12 @@
-//! Dynamic plugin management helper.
+//! Dynamic plugin management helper. Experiments over dynamic plugins in Rust.
+//!
+//! To see the example in action (on linux):
+//!
+//! ```sh
+//! % cd $(git rev-parse --show-toplevel)
+//! % cargo build
+//! % ./target/debug/example-application ./target/debug/libplugin_example.so
+//! ```
 //!
 //! # Allocations
 //!
