@@ -17,7 +17,7 @@ extern crate libloading;
 static A: ::std::alloc::System = ::std::alloc::System;
 
 use std::ffi::OsStr;
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 
 pub use libloading::Result;
 
@@ -51,6 +51,12 @@ impl<T: ?Sized> Deref for SharedLibPlugin<T> {
 
     fn deref(&self) -> &T {
         unsafe { &*self.plugin_interface }
+    }
+}
+
+impl<T: ?Sized> DerefMut for SharedLibPlugin<T> {
+    fn deref_mut(&mut self) -> &mut T {
+        unsafe { &mut *self.plugin_interface }
     }
 }
 
