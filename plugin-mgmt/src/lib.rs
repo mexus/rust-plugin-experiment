@@ -20,73 +20,34 @@
 
 extern crate libloading;
 
+#[macro_use]
+extern crate rental;
+
 #[cfg(not(feature = "no_enforce_system_allocator"))]
 #[global_allocator]
 static A: ::std::alloc::System = ::std::alloc::System;
 
-use std::ffi::OsStr;
-use std::ops::{Deref, DerefMut};
+mod plug_interface;
+mod renting;
 
+use libloading::Library;
 pub use libloading::Result;
-
-pub struct SharedLibPlugin<T: ?Sized> {
-    plugin_interface: *mut T,
-    lib: Option<libloading::Library>,
-}
+pub use renting::SharedLibPlugin;
+use std::ffi::OsStr;
 
 pub fn load_plugin<T: ?Sized, P: AsRef<OsStr>>(
     path: P,
     symbol: &[u8],
 ) -> Result<SharedLibPlugin<T>> {
-    let lib = libloading::Library::new(path)?;
-    let plugin: Box<T> = unsafe {
-        let func: libloading::Symbol<fn() -> Box<T>> = lib.get(symbol)?;
-        func()
-    };
-    let plugin_interface = Box::into_raw(plugin);
-    Ok(SharedLibPlugin {
-        plugin_interface,
-        lib: Some(lib),
-    })
+    let lib = Library::new(path)?;
+    SharedLibPlugin::load_plugin(lib, symbol)
 }
 
-pub fn load_plugin_arg<T: ?Sized, A, P: AsRef<OsStr>>(
+pub fn load_plugin_arg<T: ?Sized, Arg, P: AsRef<OsStr>>(
     path: P,
     symbol: &[u8],
-    arg: A,
+    argument: Arg,
 ) -> Result<SharedLibPlugin<T>> {
-    let lib = libloading::Library::new(path)?;
-    let plugin: Box<T> = unsafe {
-        let func: libloading::Symbol<fn(A) -> Box<T>> = lib.get(symbol)?;
-        func(arg)
-    };
-    let plugin_interface = Box::into_raw(plugin);
-    Ok(SharedLibPlugin {
-        plugin_interface,
-        lib: Some(lib),
-    })
-}
-
-impl<T: ?Sized> Deref for SharedLibPlugin<T> {
-    type Target = T;
-
-    fn deref(&self) -> &T {
-        unsafe { &*self.plugin_interface }
-    }
-}
-
-impl<T: ?Sized> DerefMut for SharedLibPlugin<T> {
-    fn deref_mut(&mut self) -> &mut T {
-        unsafe { &mut *self.plugin_interface }
-    }
-}
-
-impl<T: ?Sized> Drop for SharedLibPlugin<T> {
-    fn drop(&mut self) {
-        // Ensuring an order in which the fields are dropped.
-        unsafe {
-            let _ = Box::from_raw(self.plugin_interface);
-        }
-        let _ = self.lib.take();
-    }
+    let lib = Library::new(path)?;
+    SharedLibPlugin::load_plugin_arg(lib, symbol, argument)
 }
